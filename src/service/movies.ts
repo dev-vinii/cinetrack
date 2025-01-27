@@ -1,13 +1,13 @@
 import { axiosInstance } from "@/lib/axios";
 
-export interface Root {
+export interface Movies {
   page: number;
-  results: Result[];
+  results: Movie[];
   total_pages: number;
   total_results: number;
 }
 
-interface Result {
+interface Movie {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
@@ -24,10 +24,17 @@ interface Result {
   vote_count: number;
 }
 
-export async function getMovies(page: number): Promise<Root> {
-  const response = await axiosInstance.get(
-    `/discover/movie?include_adult=true&include_video=false&language=pt-BR&page=${page}&sort_by=popularity.desc`
-  );
+export async function getMovies(page: number, genre?: string): Promise<Movies> {
+  const params = {
+    params: {
+      page,
+      with_genres: genre,
+      include_adult: true,
+      language: "pt-BR",
+    },
+  };
+
+  const response = await axiosInstance.get(`/discover/movie`, params);
 
   return response.data;
 }

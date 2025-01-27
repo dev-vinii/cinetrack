@@ -1,9 +1,14 @@
 import { getMovies } from "@/service/movies";
 import { useQuery } from "@tanstack/react-query";
 
-export function useMovies(page: number) {
+type Param = {
+  page: number;
+  genre: string;
+};
+
+export function useMovies({ page, genre }: Param) {
   return useQuery({
-    queryKey: ["movies", page],
-    queryFn: () => getMovies(page),
+    queryKey: ["movies", page, genre],
+    queryFn: () => getMovies(page, genre),
   });
 }
