@@ -7,7 +7,7 @@ export interface Root {
   total_results: number;
 }
 
-export interface Result {
+interface Result {
   adult: boolean;
   backdrop_path: string;
   genre_ids: number[];
