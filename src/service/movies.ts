@@ -24,13 +24,18 @@ interface Movie {
   vote_count: number;
 }
 
-export async function getMovies(page: number, genre?: string): Promise<Movies> {
+export async function getMovies(
+  page: number,
+  genre?: string,
+  selectedYear?: string
+): Promise<Movies> {
   const params = {
     params: {
       page,
       with_genres: genre,
       include_adult: true,
       language: "pt-BR",
+      primary_release_year: selectedYear,
     },
   };
 
