@@ -22,7 +22,7 @@ function App() {
 
   return (
     <main className="max-w-screen p-8 items-center flex flex-col gap-36">
-      <section className="flex flex-col gap-4 items-center">
+      <section className="flex flex-col gap-4 items-center w-full">
         <h1 className="text-4xl font-bold text-center">Filmes Populares</h1>
         <Filters
           genre={genre}

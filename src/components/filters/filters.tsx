@@ -27,7 +27,7 @@ export function Filters({
   ).reverse();
 
   return (
-    <>
+    <section className="gap-4 flex items-center justify-end w-full">
       <Select value={genre} onValueChange={(value) => setGenre(value)}>
         <SelectTrigger className="w-40 p-2 bg-white rounded-md border">
           {genre
@@ -56,6 +56,6 @@ export function Filters({
           ))}
         </SelectContent>
       </Select>
-    </>
+    </section>
   );
 }
