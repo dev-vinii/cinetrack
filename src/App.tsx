@@ -22,12 +22,10 @@ function App() {
 
   return (
     <main className="min-h-screen w-full">
-      {/* Hero Section */}
       <div className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-indigo-900/20" />
         <div className="relative max-w-7xl mx-auto px-8 py-16">
           <div className="text-center space-y-8">
-            {/* Header with Icon */}
             <div className="flex items-center justify-center gap-4 mb-8">
               <div className="w-16 h-16 bg-gradient-to-br from-yellow-400 to-orange-500 rounded-full flex items-center justify-center text-2xl shadow-lg">
                 🍿
@@ -41,7 +39,6 @@ function App() {
               Descubra os filmes mais populares e encontre sua próxima experiência cinematográfica
             </p>
             
-            {/* Filters */}
             <div className="pt-8">
               <Filters
                 genre={genre}
@@ -58,7 +55,6 @@ function App() {
         </div>
       </div>
 
-      {/* Content Section */}
       <div className="max-w-7xl mx-auto px-8 py-16">
         {isLoading && (
           <div className="flex flex-col items-center justify-center py-20 space-y-4">
