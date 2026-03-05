@@ -14,7 +14,16 @@ export async function getGenres(): Promise<Genres> {
     language: "pt-BR",
   };
 
-  const response = await axiosInstance.get(`/genre/movie/list`, { params });
+  const response = await axiosInstance.get(`/genre/movie/list`, {
+    params,
+    data: {},
+  });
+
+  return response.data;
+}
+
+export async function createGenre(genre: Genre) {
+  const response = await axiosInstance.post(`/genre`, genre);
 
   return response.data;
 }

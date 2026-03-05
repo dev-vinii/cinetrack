@@ -1,9 +1,8 @@
 import axios from "axios";
 
 export const axiosInstance = axios.create({
-  baseURL: "https://api.themoviedb.org/3",
+  baseURL: "http://localhost:5001/api",
   headers: {
     Accept: "application/json",
-    Authorization: `Bearer ${import.meta.env.VITE_TMDB_API_KEY}`,
   },
 });

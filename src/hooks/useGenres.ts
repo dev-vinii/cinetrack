@@ -6,4 +6,8 @@ export function useGenres() {
     queryKey: ["genres"],
     queryFn: () => getGenres(),
   });
+  // quando for create usar useMutation
+  // const createGenre = useMutation({
+  //   mutationFn: (genre: Genre) => createGenre(genre),
+  // });
 }
