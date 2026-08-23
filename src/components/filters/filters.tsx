@@ -1,81 +1,140 @@
+"use client";
+
+import { Search, X } from "lucide-react";
 import { useGenres } from "@/hooks/useGenres";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
+import { Media } from "@/service/titles";
 
 interface FiltersProps {
+  media: Media;
+  query: string;
+  setQuery: (query: string) => void;
   genre: string;
   setGenre: (genre: string) => void;
   selectedYear?: string;
-  setSelectedYear: (year: string) => void;
+  setSelectedYear: (year: string | undefined) => void;
 }
 
 export function Filters({
+  media,
+  query,
+  setQuery,
   genre,
   setGenre,
   selectedYear,
   setSelectedYear,
 }: FiltersProps) {
-  const { data: genres } = useGenres();
+  const { data: genres } = useGenres(media);
 
   const currentYear = new Date().getFullYear();
   const years = Array.from({ length: currentYear - 1920 }, (_, i) =>
     (1920 + i).toString()
   ).reverse();
 
+  const selectedGenreName = genre
+    ? genres?.genres.find((item) => item.id.toString() === genre)?.name
+    : undefined;
+
+  const hasActiveFilters = Boolean(query || genre || selectedYear);
+
   return (
-    <section className="flex items-center justify-center gap-6 w-full max-w-md mx-auto" role="search" aria-label="Movie filters">
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-400 font-medium" aria-hidden="true">🎭</span>
-        <Select value={genre} onValueChange={(value) => setGenre(value)}>
-          <SelectTrigger 
-            className="w-44 p-3 bg-slate-800/50 backdrop-blur-sm border-slate-600/50 rounded-lg text-white hover:bg-slate-700/50 transition-colors duration-200 focus:ring-2 focus:ring-purple-500/50"
-            aria-label="Select movie genre"
-          >
-            {genre
-              ? genres?.genres.find((g) => g.id.toString() === genre)?.name
-              : "Gênero"}
-          </SelectTrigger>
+    <section role="search" aria-label="Busca e filtros">
+      <form
+        className="flex flex-col gap-2 md:flex-row md:items-center"
+        onSubmit={(event) => event.preventDefault()}
+      >
+        <label className="relative min-w-0 flex-1">
+          <span className="sr-only">Buscar pelo título</span>
+          <Search
+            className="pointer-events-none absolute top-1/2 left-3 size-4 -translate-y-1/2 text-mute"
+            aria-hidden="true"
+          />
+          <Input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Buscar pelo título..."
+            className="h-10 pr-9 pl-9"
+            autoComplete="off"
+            name="q"
+          />
+          {query && (
+            <button
+              type="button"
+              onClick={() => setQuery("")}
+              className="absolute top-1/2 right-2 -translate-y-1/2 rounded p-1 text-mute hover:bg-muted hover:text-ink"
+              aria-label="Limpar busca"
+            >
+              <X className="size-4" />
+            </button>
+          )}
+        </label>
 
-          <SelectContent className="bg-slate-800/95 backdrop-blur-md border-slate-600/50 rounded-lg shadow-2xl">
-            {genres?.genres.map((genre) => (
-              <SelectItem 
-                key={genre.id} 
-                value={genre.id.toString()}
-                className="text-white hover:bg-slate-700/50 focus:bg-slate-700/50 cursor-pointer"
-              >
-                {genre.name}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-
-      <div className="flex items-center gap-2">
-        <span className="text-sm text-gray-400 font-medium" aria-hidden="true">📅</span>
-        <Select value={selectedYear} onValueChange={setSelectedYear}>
-          <SelectTrigger 
-            className="w-44 p-3 bg-slate-800/50 backdrop-blur-sm border-slate-600/50 rounded-lg text-white hover:bg-slate-700/50 transition-colors duration-200 focus:ring-2 focus:ring-purple-500/50"
-            aria-label="Select release year"
+        <div className="flex flex-wrap items-center gap-2 md:flex-nowrap">
+          <Select
+            value={genre || "all"}
+            onValueChange={(value) => setGenre(value === "all" ? "" : value)}
           >
-            {selectedYear || "Ano"}
-          </SelectTrigger>
-          <SelectContent className="bg-slate-800/95 backdrop-blur-md border-slate-600/50 rounded-lg shadow-2xl max-h-60 overflow-y-auto">
-            {years.map((year) => (
-              <SelectItem 
-                key={year} 
-                value={year}
-                className="text-white hover:bg-slate-700/50 focus:bg-slate-700/50 cursor-pointer"
-              >
-                {year}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
+            <SelectTrigger
+              className="h-10 w-full md:w-44"
+              aria-label="Filtrar por gênero"
+            >
+              {selectedGenreName ?? "Gênero"}
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all">Todos os gêneros</SelectItem>
+              {genres?.genres.map((item) => (
+                <SelectItem key={item.id} value={item.id.toString()}>
+                  {item.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={selectedYear ?? "all"}
+            onValueChange={(value) =>
+              setSelectedYear(value === "all" ? undefined : value)
+            }
+          >
+            <SelectTrigger
+              className="h-10 w-full md:w-32"
+              aria-label="Filtrar por ano"
+            >
+              {selectedYear ?? "Ano"}
+            </SelectTrigger>
+            <SelectContent className="max-h-72">
+              <SelectItem value="all">Todos os anos</SelectItem>
+              {years.map((year) => (
+                <SelectItem key={year} value={year}>
+                  {year}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          {hasActiveFilters && (
+            <Button
+              type="button"
+              variant="ghost"
+              className="h-10 text-white/70 hover:bg-white/10 hover:text-white"
+              onClick={() => {
+                setQuery("");
+                setGenre("");
+                setSelectedYear(undefined);
+              }}
+            >
+              Limpar
+            </Button>
+          )}
+        </div>
+      </form>
     </section>
   );
 }

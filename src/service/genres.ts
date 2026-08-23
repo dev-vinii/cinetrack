@@ -1,4 +1,4 @@
-import { axiosInstance } from "@/lib/axios";
+import { Media } from "@/service/titles";
 
 export interface Genres {
   genres: Genre[];
@@ -9,12 +9,12 @@ export interface Genre {
   name: string;
 }
 
-export async function getGenres(): Promise<Genres> {
-  const params = {
-    language: "pt-BR",
-  };
+export async function getGenres(media: Media): Promise<Genres> {
+  const response = await fetch(`/api/genres?media=${media}`);
 
-  const response = await axiosInstance.get(`/genre/movie/list`, { params });
+  if (!response.ok) {
+    throw new Error("Falha ao buscar gêneros");
+  }
 
-  return response.data;
+  return response.json();
 }
