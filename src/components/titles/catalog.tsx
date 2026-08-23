@@ -7,7 +7,7 @@ import { TitleGrid } from "@/components/titles/title-grid";
 import { useDebouncedValue } from "@/hooks/useDebouncedValue";
 import { useTitles } from "@/hooks/useTitles";
 import { useGenres } from "@/hooks/useGenres";
-import { Media } from "@/service/titles";
+import { Media, SortBy } from "@/service/titles";
 
 export function Catalog() {
   const [media, setMedia] = useState<Media>("movie");
@@ -15,6 +15,7 @@ export function Catalog() {
   const [query, setQuery] = useState("");
   const [genre, setGenre] = useState("");
   const [year, setYear] = useState<string | undefined>();
+  const [sort, setSort] = useState<SortBy>("popularity");
   const debouncedQuery = useDebouncedValue(query, 400);
   const { data: genres } = useGenres(media);
   const { data: titles, isLoading, isError, isFetching, refetch } = useTitles({
@@ -23,6 +24,7 @@ export function Catalog() {
     genre,
     year,
     query: debouncedQuery,
+    sort,
   });
 
   const handleMediaChange = (value: Media) => {
@@ -46,6 +48,11 @@ export function Catalog() {
     setPage(1);
   };
 
+  const handleSortChange = (value: SortBy) => {
+    setSort(value);
+    setPage(1);
+  };
+
   const genreName = genre
     ? genres?.genres.find((item) => item.id.toString() === genre)?.name
     : undefined;
@@ -55,7 +62,9 @@ export function Catalog() {
     if (debouncedQuery) parts.push(`“${debouncedQuery}”`);
     if (genreName) parts.push(genreName);
     if (year) parts.push(year);
-    if (parts.length === 0) return "Em alta agora";
+    if (parts.length === 0) {
+      return sort === "rating" ? "Melhor avaliados" : "Em alta agora";
+    }
     return parts.join(" · ");
   })();
 
@@ -82,6 +91,8 @@ export function Catalog() {
             setGenre={handleGenreChange}
             selectedYear={year}
             setSelectedYear={handleYearChange}
+            sort={sort}
+            setSort={handleSortChange}
           />
           <MediaTabs media={media} setMedia={handleMediaChange} />
         </div>

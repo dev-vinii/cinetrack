@@ -10,7 +10,7 @@ import {
   SelectItem,
   SelectTrigger,
 } from "@/components/ui/select";
-import { Media } from "@/service/titles";
+import { Media, SortBy } from "@/service/titles";
 
 interface FiltersProps {
   media: Media;
@@ -20,6 +20,8 @@ interface FiltersProps {
   setGenre: (genre: string) => void;
   selectedYear?: string;
   setSelectedYear: (year: string | undefined) => void;
+  sort: SortBy;
+  setSort: (sort: SortBy) => void;
 }
 
 export function Filters({
@@ -30,6 +32,8 @@ export function Filters({
   setGenre,
   selectedYear,
   setSelectedYear,
+  sort,
+  setSort,
 }: FiltersProps) {
   const { data: genres } = useGenres(media);
 
@@ -116,6 +120,22 @@ export function Filters({
                   {year}
                 </SelectItem>
               ))}
+            </SelectContent>
+          </Select>
+
+          <Select
+            value={sort}
+            onValueChange={(value) => setSort(value as SortBy)}
+          >
+            <SelectTrigger
+              className="h-10 w-full md:w-40"
+              aria-label="Ordenar resultados"
+            >
+              {sort === "rating" ? "Melhor nota" : "Popularidade"}
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="popularity">Popularidade</SelectItem>
+              <SelectItem value="rating">Melhor nota</SelectItem>
             </SelectContent>
           </Select>
 

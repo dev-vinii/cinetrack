@@ -1,4 +1,5 @@
 export type Media = "movie" | "tv";
+export type SortBy = "popularity" | "rating";
 
 export interface Title {
   id: number;
@@ -22,6 +23,7 @@ interface GetTitlesParams {
   genre?: string;
   year?: string;
   query?: string;
+  sort?: SortBy;
 }
 
 export async function getTitles({
@@ -30,11 +32,13 @@ export async function getTitles({
   genre,
   year,
   query,
+  sort = "popularity",
 }: GetTitlesParams): Promise<TitleList> {
   const params = new URLSearchParams({ media, page: String(page) });
   if (genre) params.set("genre", genre);
   if (year) params.set("year", year);
   if (query?.trim()) params.set("query", query.trim());
+  if (sort !== "popularity") params.set("sort", sort);
 
   const response = await fetch(`/api/titles?${params}`);
 
