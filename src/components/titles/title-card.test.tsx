@@ -11,11 +11,19 @@ describe("TitleCard", () => {
       vote_average: 8.4,
     });
 
-    render(<TitleCard title={title} />);
+    render(<TitleCard media="movie" title={title} />);
 
     expect(screen.getByRole("heading", { name: "Inception" })).toBeInTheDocument();
     expect(screen.getByText(/2010/)).toBeInTheDocument();
     expect(screen.getByText("8.4 ★")).toBeInTheDocument();
+  });
+
+  it("links to the title details page", () => {
+    const title = buildTitle({ id: 27205, title: "Inception" });
+
+    render(<TitleCard media="movie" title={title} />);
+
+    expect(screen.getByRole("link")).toHaveAttribute("href", "/title/movie/27205");
   });
 
   it("renders poster image when poster_path is provided", () => {
@@ -24,7 +32,7 @@ describe("TitleCard", () => {
       poster_path: "/poster.jpg",
     });
 
-    render(<TitleCard title={title} />);
+    render(<TitleCard media="movie" title={title} />);
 
     const image = screen.getByRole("img", { name: "Pôster de Inception" });
     expect(image).toHaveAttribute(
@@ -40,7 +48,7 @@ describe("TitleCard", () => {
       vote_average: 0,
     });
 
-    render(<TitleCard title={title} />);
+    render(<TitleCard media="movie" title={title} />);
 
     expect(screen.getByText("I")).toBeInTheDocument();
     expect(screen.queryByRole("img")).not.toBeInTheDocument();

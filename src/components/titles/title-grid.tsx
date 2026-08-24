@@ -56,7 +56,7 @@ export function TitleGrid({
         }`}
       >
         {titles?.results.map((title) => (
-          <TitleCard key={title.id} title={title} />
+          <TitleCard key={title.id} media={media} title={title} />
         ))}
       </div>
 
