@@ -1,7 +1,13 @@
 import { render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import userEvent from "@testing-library/user-event";
+import { describe, expect, it, vi } from "vitest";
+import { trackTitleOpen } from "@/lib/datadog";
 import { buildTitle } from "@/test/factories/title";
 import { TitleCard } from "./title-card";
+
+vi.mock("@/lib/datadog", () => ({
+  trackTitleOpen: vi.fn(),
+}));
 
 describe("TitleCard", () => {
   it("renders title, year and rating", () => {
@@ -24,6 +30,16 @@ describe("TitleCard", () => {
     render(<TitleCard media="movie" title={title} />);
 
     expect(screen.getByRole("link")).toHaveAttribute("href", "/title/movie/27205");
+  });
+
+  it("tracks title.open when the card is clicked", async () => {
+    const user = userEvent.setup();
+    const title = buildTitle({ id: 27205, title: "Inception" });
+
+    render(<TitleCard media="movie" title={title} />);
+    await user.click(screen.getByRole("link"));
+
+    expect(trackTitleOpen).toHaveBeenCalledWith({ media: "movie", id: 27205 });
   });
 
   it("renders poster image when poster_path is provided", () => {

@@ -1,12 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Filters } from "@/components/filters/filters";
 import { MediaTabs } from "@/components/titles/media-tabs";
 import { TitleGrid } from "@/components/titles/title-grid";
 import { useDebouncedValue } from "@/hooks/use-debounced-value";
 import { useTitles } from "@/hooks/use-titles";
 import { useGenres } from "@/hooks/use-genres";
+import {
+  trackCatalogError,
+  trackCatalogFilter,
+  trackCatalogSearch,
+} from "@/lib/datadog";
 import { Media, SortBy } from "@/service/titles";
 
 export function Catalog() {
@@ -18,7 +23,7 @@ export function Catalog() {
   const [sort, setSort] = useState<SortBy>("popularity");
   const debouncedQuery = useDebouncedValue(query, 400);
   const { data: genres } = useGenres(media);
-  const { data: titles, isLoading, isError, isFetching, refetch } = useTitles({
+  const { data: titles, isLoading, isError, isFetching, error, refetch } = useTitles({
     media,
     page,
     genre,
@@ -26,11 +31,55 @@ export function Catalog() {
     query: debouncedQuery,
     sort,
   });
+  const lastSearch = useRef<string | null>(null);
+  const lastError = useRef<unknown>(null);
+
+  useEffect(() => {
+    const trimmed = debouncedQuery.trim();
+    if (!trimmed) {
+      lastSearch.current = null;
+      return;
+    }
+    if (lastSearch.current === trimmed) return;
+    lastSearch.current = trimmed;
+
+    trackCatalogSearch({
+      queryLength: trimmed.length,
+      media,
+      genre: genre || undefined,
+      year,
+      sort,
+    });
+    // Only the settled query should create a search event.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- filter fields are snapshot context
+  }, [debouncedQuery]);
+
+  useEffect(() => {
+    if (!isError) {
+      lastError.current = null;
+      return;
+    }
+
+    const currentError = error ?? new Error("Falha ao buscar títulos");
+    if (lastError.current === currentError) return;
+    lastError.current = currentError;
+
+    trackCatalogError(currentError, {
+      media,
+      page,
+      genre: genre || undefined,
+      year,
+      queryLength: debouncedQuery.trim().length,
+      sort,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- snapshot the filters at error time
+  }, [isError, error]);
 
   const handleMediaChange = (value: Media) => {
     setMedia(value);
     setGenre("");
     setPage(1);
+    trackCatalogFilter({ media: value, year, sort, changed: "media" });
   };
 
   const handleQueryChange = (value: string) => {
@@ -41,16 +90,37 @@ export function Catalog() {
   const handleGenreChange = (value: string) => {
     setGenre(value);
     setPage(1);
+    trackCatalogFilter({
+      media,
+      genre: value || undefined,
+      year,
+      sort,
+      changed: "genre",
+    });
   };
 
   const handleYearChange = (value: string | undefined) => {
     setYear(value);
     setPage(1);
+    trackCatalogFilter({
+      media,
+      genre: genre || undefined,
+      year: value,
+      sort,
+      changed: "year",
+    });
   };
 
   const handleSortChange = (value: SortBy) => {
     setSort(value);
     setPage(1);
+    trackCatalogFilter({
+      media,
+      genre: genre || undefined,
+      year,
+      sort: value,
+      changed: "sort",
+    });
   };
 
   const genreName = genre

@@ -1,5 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import Image from "next/image";
+import { trackTitleOpen } from "@/lib/datadog";
 import { Media, Title } from "@/service/titles";
 
 interface TitleCardProps {
@@ -14,7 +17,11 @@ export function TitleCard({ media, title }: TitleCardProps) {
 
   return (
     <article>
-      <Link href={href} className="group block">
+      <Link
+        href={href}
+        className="group block"
+        onClick={() => trackTitleOpen({ media, id: title.id })}
+      >
         <div className="relative aspect-[2/3] overflow-hidden rounded-md border border-line bg-muted transition-shadow group-hover:shadow-md">
           {title.poster_path ? (
             <Image
