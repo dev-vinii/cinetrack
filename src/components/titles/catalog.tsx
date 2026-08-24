@@ -4,9 +4,9 @@ import { useState } from "react";
 import { Filters } from "@/components/filters/filters";
 import { MediaTabs } from "@/components/titles/media-tabs";
 import { TitleGrid } from "@/components/titles/title-grid";
-import { useDebouncedValue } from "@/hooks/useDebouncedValue";
-import { useTitles } from "@/hooks/useTitles";
-import { useGenres } from "@/hooks/useGenres";
+import { useDebouncedValue } from "@/hooks/use-debounced-value";
+import { useTitles } from "@/hooks/use-titles";
+import { useGenres } from "@/hooks/use-genres";
 import { Media, SortBy } from "@/service/titles";
 
 export function Catalog() {

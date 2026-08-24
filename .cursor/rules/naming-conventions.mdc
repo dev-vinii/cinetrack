@@ -1,0 +1,53 @@
+---
+description: Convenções de nomenclatura de arquivos e código
+alwaysApply: true
+---
+
+# Naming Conventions
+
+## Arquivos
+
+Use **kebab-case** para todos os arquivos do projeto:
+
+```
+use-debounced-value.ts
+title-card.tsx
+title-card.test.tsx
+media-tabs.tsx
+```
+
+| ✅ Correto | ❌ Evitar |
+|-----------|----------|
+| `use-titles.ts` | `useTitles.ts` |
+| `title-card.tsx` | `TitleCard.tsx` |
+| `use-debounced-value.test.ts` | `useDebouncedValue.test.ts` |
+
+### Exceções (convenção do framework/ecossistema)
+
+- Next.js App Router: `page.tsx`, `layout.tsx`, `route.ts`, `loading.tsx`, `error.tsx`
+- Config na raiz: `next.config.ts`, `vitest.config.ts`, `postcss.config.mjs`, `tsconfig.json`
+
+## Código
+
+| Item | Convenção | Exemplo |
+|------|-----------|---------|
+| Componentes React | PascalCase | `TitleCard` |
+| Hooks | camelCase com prefixo `use` | `useTitles` |
+| Funções/variáveis | camelCase | `getTitles`, `debouncedQuery` |
+| Tipos/interfaces | PascalCase | `Title`, `SortBy` |
+| Constantes | camelCase ou UPPER_SNAKE para env | `TMDB_BASE_URL` |
+
+O nome do **arquivo** do hook usa kebab-case; a **função exportada** mantém camelCase:
+
+```
+// arquivo: use-debounced-value.ts
+export function useDebouncedValue() { ... }
+```
+
+## Testes
+
+Use `@faker-js/faker` para gerar dados de teste via factories em `src/test/factories/`. Sobrescreva apenas os campos relevantes para cada caso:
+
+```typescript
+const title = buildTitle({ title: "Inception", vote_average: 8.4 });
+```

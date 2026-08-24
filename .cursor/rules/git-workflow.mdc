@@ -1,0 +1,45 @@
+---
+description: Convenções de Git — branches e commits
+alwaysApply: true
+---
+
+# Git Workflow
+
+## Branches
+
+Use o prefixo do tipo de mudança seguido de descrição curta em kebab-case:
+
+```
+feat/sort-by-rating
+fix/title-card-image-fallback
+refact/tmdb-client
+docs/readme-setup
+```
+
+| Prefixo | Quando usar |
+|---------|-------------|
+| `feat/` | Nova funcionalidade |
+| `fix/` | Correção de bug |
+| `refact/` | Refatoração sem mudança de comportamento |
+| `docs/` | Apenas documentação |
+| `style/` | Apenas estilo/visual |
+
+**Não use** prefixos como `cursor/` ou nomes genéricos (`update`, `changes`).
+
+## Commits
+
+Siga o padrão [Conventional Commits](https://www.conventionalcommits.org/) já usado no projeto:
+
+```
+feat(filters): add sort by rating option
+fix(api): handle missing TMDB key
+refact: extract tmdb client helper
+```
+
+- Escopo opcional entre parênteses: `feat(titles):`, `fix(api):`
+- Mensagem em inglês, imperativo, minúscula após o tipo
+- Um commit por mudança lógica
+
+## Arquivos
+
+Todos os arquivos do projeto usam **kebab-case** (`use-titles.ts`, `title-card.tsx`). Ver regra `naming-conventions` para detalhes e exceções do Next.js.
