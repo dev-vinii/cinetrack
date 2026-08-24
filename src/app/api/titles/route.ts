@@ -21,6 +21,7 @@ export async function GET(request: NextRequest) {
   const genre = searchParams.get("genre") || undefined;
   const year = searchParams.get("year") || undefined;
   const query = searchParams.get("query")?.trim() || undefined;
+  const sort = searchParams.get("sort") === "rating" ? "rating" : "popularity";
 
   const params = new URLSearchParams({
     page,
@@ -43,7 +44,11 @@ export async function GET(request: NextRequest) {
     if (year) params.set(yearParam, year);
   } else {
     endpoint = media === "tv" ? "/discover/tv" : "/discover/movie";
-    params.set("sort_by", "popularity.desc");
+    params.set(
+      "sort_by",
+      sort === "rating" ? "vote_average.desc" : "popularity.desc"
+    );
+    if (sort === "rating") params.set("vote_count.gte", "100");
     if (genre) params.set("with_genres", genre);
     if (year) params.set(yearParam, year);
   }
@@ -72,6 +77,10 @@ export async function GET(request: NextRequest) {
   if (query && genre) {
     const genreId = Number(genre);
     results = results.filter((item) => item.genre_ids.includes(genreId));
+  }
+
+  if (sort === "rating") {
+    results = [...results].sort((a, b) => b.vote_average - a.vote_average);
   }
 
   const payload: TitleList = {
