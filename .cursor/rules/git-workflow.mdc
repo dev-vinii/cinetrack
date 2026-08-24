@@ -43,3 +43,7 @@ refact: extract tmdb client helper
 ## Arquivos
 
 Todos os arquivos do projeto usam **kebab-case** (`use-titles.ts`, `title-card.tsx`). Ver regra `naming-conventions` para detalhes e exceções do Next.js.
+
+## Pre-push
+
+O hook Husky em `.husky/pre-push` roda `pnpm lint` antes de cada `git push`. Para pular em emergência: `git push --no-verify`.
